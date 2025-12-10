@@ -1,87 +1,77 @@
-# --- trade_server.py (Исполнитель v2.0 с уведомлениями) ---
+# --- trade_server.py (FIXED DISCORD) ---
 from flask import Flask, request
 import ccxt
 import os
 import requests
 from dotenv import load_dotenv
 
-# 1. Загрузка настроек
+# Загрузка
 load_dotenv()
-API_KEY = os.getenv("API_KEY")      # Ваши названия переменных
+API_KEY = os.getenv("API_KEY")
 SECRET = os.getenv("API_SECRET")
-
-# Настройки уведомлений
 TG_TOKEN = os.getenv("TG_TOKEN")
 TG_PRIVATE_ID = os.getenv("TG_PRIVATE_ID")
 TG_PUBLIC_ID = os.getenv("TG_PUBLIC_ID")
 DISCORD_WEBHOOK = os.getenv("DISCORD_WEBHOOK_URL")
 
-# Настройка биржи
-exchange = ccxt.binance({
-    'apiKey': API_KEY,
-    'secret': SECRET,
-    'enableRateLimit': True,
-    'options': {'defaultType': 'spot'} 
-})
-
 app = Flask(__name__)
 
-# --- ФУНКЦИИ УВЕДОМЛЕНИЙ ---
-def send_telegram(message, chat_id):
-    if not TG_TOKEN or not chat_id: return
-    try:
-        url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
-        requests.post(url, json={'chat_id': chat_id, 'text': message, 'parse_mode': 'HTML'})
-    except Exception as e:
-        print(f"Ошибка отправки в TG: {e}")
+exchange = ccxt.binance({
+    'apiKey': API_KEY, 'secret': SECRET,
+    'enableRateLimit': True, 'options': {'defaultType': 'spot'} 
+})
+exchange.set_sandbox_mode(True) # TESTNET
 
-def send_discord(message):
-    if not DISCORD_WEBHOOK: return
-    try:
-        requests.post(DISCORD_WEBHOOK, json={'content': message})
-    except Exception as e:
-        print(f"Ошибка отправки в Discord: {e}")
-
-def notify_all(symbol, price, amount_usd, is_test=True):
-    # Красивое сообщение со смайликами
-    mode = "[TEST MODE]" if is_test else "🚀 LIVE TRADE"
-    msg = (
-        f"<b>{mode} BUY SIGNAL</b>\n\n"
+# --- УВЕДОМЛЕНИЯ ---
+def notify(symbol, action, price, amount, is_test=True):
+    mode = "[TEST MODE]" if is_test else "🚀 LIVE"
+    emoji = "🟢" if action == "buy" else "🔴"
+    
+    # Текст для Телеграм (с HTML)
+    msg_tg = (
+        f"{emoji} <b>{mode} {action.upper()} SIGNAL</b>\n\n"
         f"💎 <b>Coin:</b> #{symbol.replace('/', '')}\n"
         f"💰 <b>Price:</b> ${price}\n"
-        f"💵 <b>Amount:</b> ${amount_usd}\n"
-        f"Strategy: RSI < 30 (Oversold)"
+        f"📊 <b>Size:</b> {amount}"
+    )
+
+    # Текст для Дискорда (Без HTML, так как Дискорд его не понимает)
+    msg_discord = (
+        f"**{emoji} {mode} {action.upper()} SIGNAL**\n"
+        f"💎 **Coin:** {symbol}\n"
+        f"💰 **Price:** ${price}\n"
+        f"📊 **Size:** {amount}"
     )
     
-    # Discord (без HTML тегов, можно упростить)
-    discord_msg = f"**{mode} BUY SIGNAL**\nCoin: {symbol}\nPrice: ${price}\nAmount: ${amount_usd}"
+    # 1. Отправляем в Телеграм
+    try:
+        url = f"https://api.telegram.org/bot{TG_TOKEN}/sendMessage"
+        requests.post(url, json={'chat_id': TG_PUBLIC_ID, 'text': msg_tg, 'parse_mode': 'HTML'})
+        requests.post(url, json={'chat_id': TG_PRIVATE_ID, 'text': msg_tg, 'parse_mode': 'HTML'})
+    except Exception as e:
+        print(f"Ошибка TG: {e}")
 
-    # 1. В публичный канал (Хвастаемся сделкой)
-    send_telegram(msg, TG_PUBLIC_ID)
-    
-    # 2. В приватный канал (Дублируем для контроля)
-    send_telegram(msg, TG_PRIVATE_ID)
-    
-    # 3. В Дискорд
-    send_discord(discord_msg)
+    # 2. Отправляем в Discord (ВОТ ЭТОГО БЛОКА НЕ ХВАТАЛО)
+    if DISCORD_WEBHOOK:
+        try:
+            requests.post(DISCORD_WEBHOOK, json={'content': msg_discord})
+        except Exception as e:
+            print(f"Ошибка Discord: {e}")
 
-def notify_error(error_text):
-    # Ошибки шлем ТОЛЬКО админу в приват
-    msg = f"⚠️ <b>BOT ERROR</b>\n\n<code>{error_text}</code>"
-    send_telegram(msg, TG_PRIVATE_ID)
-
-# --- ОСНОВНОЙ СЕРВЕР ---
+# --- ЛОГИКА ---
 @app.route('/tv_alert', methods=['POST'])
 def webhook():
     data = request.json
-    print(f"--- СИГНАЛ: {data} ---")
-    
     symbol = data.get('ticker')
-    side = data.get('action')
+    side = data.get('action') # 'buy' или 'sell'
     amount_usd = float(data.get('amount_usd', 15))
+    
+    print(f"\n--- СИГНАЛ: {side.upper()} {symbol} ---")
     
     if side == 'buy':
         return execute_buy(symbol, amount_usd)
+    elif side == 'sell':
+        return execute_sell(symbol)
     
     return {"status": "ignored"}, 200
 
@@ -89,26 +79,48 @@ def execute_buy(symbol, amount_usd):
     try:
         ticker = exchange.fetch_ticker(symbol)
         price = ticker['last']
-        amount_coin = amount_usd / price
-        amount_coin = exchange.amount_to_precision(symbol, amount_coin)
+        amount_coin = exchange.amount_to_precision(symbol, amount_usd / price)
         
-        print(f"Покупка {amount_coin} {symbol}...")
+        print(f"Покупаем {amount_coin} {symbol}...")
         
-        # --- ! РЕАЛЬНАЯ ТОРГОВЛЯ (Раскомментировать для боя) ! ---
-        # order = exchange.create_market_buy_order(symbol, amount_coin)
-        # notify_all(symbol, price, amount_usd, is_test=False) # Отправляем уведомление
-        # return {"status": "success", "order": order['id']}, 200
-        
-        # --- ТЕСТОВЫЙ РЕЖИМ ---
-        print("Тест успех.")
-        notify_all(symbol, price, amount_usd, is_test=True) # Отправляем уведомление
+        # --- TESTNET ---
+        notify(symbol, "buy", price, f"${amount_usd}", is_test=True)
         return {"status": "success", "message": "Test Buy"}, 200
         
+        # --- REAL ORDER ---
+        # exchange.create_market_buy_order(symbol, amount_coin)
+        # notify(symbol, "buy", price, f"${amount_usd}", is_test=False)
+
     except Exception as e:
-        err_msg = str(e)
-        print(f"ОШИБКА: {err_msg}")
-        notify_error(err_msg) # Сообщаем об ошибке в TG
-        return {"status": "error", "message": err_msg}, 500
+        print(f"Ошибка покупки: {e}")
+        return {"error": str(e)}, 500
+
+def execute_sell(symbol):
+    try:
+        base_currency = symbol.split('/')[0]
+        balance = exchange.fetch_balance()
+        free_amount = balance[base_currency]['free']
+        
+        if free_amount == 0:
+            print(f"Нечего продавать: баланс {base_currency} пуст.")
+            return {"status": "skipped", "message": "Zero balance"}, 200
+
+        print(f"Продаем всё: {free_amount} {symbol}...")
+        
+        ticker = exchange.fetch_ticker(symbol)
+        price = ticker['last']
+
+        # --- TESTNET ---
+        notify(symbol, "sell", price, f"{free_amount} coins", is_test=True)
+        return {"status": "success", "message": "Test Sell"}, 200
+
+        # --- REAL ORDER ---
+        # exchange.create_market_sell_order(symbol, free_amount)
+        # notify(symbol, "sell", price, f"{free_amount} coins", is_test=False)
+
+    except Exception as e:
+        print(f"Ошибка продажи: {e}")
+        return {"error": str(e)}, 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
