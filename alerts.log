@@ -1,0 +1,55 @@
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 11:24:45] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 11:25:22] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 13:43:06] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 15:02:26] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 15:02:27] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 15:02:28] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 15:02:28] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 15:02:29] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 16:13:31] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 16:13:32] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 16:14:33] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 20:25:01] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 20:25:02] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 20:25:03] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 20:25:03] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 20:27:06] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 20:27:06] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 21:48:38] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 21:48:39] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 21:48:40] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 21:51:45] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 21:54:50] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [09/Dec/2025 21:54:51] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [10/Dec/2025 07:13:35] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [10/Dec/2025 10:26:13] "POST /tv_alert HTTP/1.1" 200 -
+ERROR:app:Err: binance {"code":-2008,"msg":"Invalid Api-Key ID."}
+INFO:werkzeug:127.0.0.1 - - [10/Dec/2025 15:37:24] "POST /tv_alert HTTP/1.1" 200 -
